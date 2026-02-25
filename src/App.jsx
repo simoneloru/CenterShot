@@ -8,6 +8,7 @@ import VirtualCaliper from './components/VirtualCaliper';
 function App() {
   const [cameraActive, setCameraActive] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [capturedPhoto, setCapturedPhoto] = useState(null);
 
   // Stato globale delle proporzioni arco
   const [settings, setSettings] = useState({
@@ -27,20 +28,26 @@ function App() {
   const [startX, setStartX] = useState(0);
 
   const handleDragStart = (e) => {
-    if (isCalibrating) return; // Disabilitato in fase calibrazione
+    if (isCalibrating || !capturedPhoto) return; // Disabilitato in fase calibrazione o senza foto
     setIsDragging(true);
     const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
     setStartX(clientX - gridOffset);
   };
 
   const handleDragMove = (e) => {
-    if (!isDragging || isCalibrating) return;
+    if (!isDragging || isCalibrating || !capturedPhoto) return;
     const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
     setGridOffset(clientX - startX);
   };
 
   const handleDragEnd = () => {
     setIsDragging(false);
+  };
+
+  const retakePhoto = () => {
+    setCapturedPhoto(null);
+    setIsCalibrating(true);
+    setGridOffset(0);
   };
 
   return (
@@ -90,9 +97,16 @@ function App() {
       >
         {cameraActive ? (
           <>
-            <CameraFeed />
+            {!capturedPhoto ? (
+              <CameraFeed onCapture={setCapturedPhoto} />
+            ) : (
+              // Contenitore Foto Statica
+              <div className="absolute inset-0 w-full h-full bg-black">
+                <img src={capturedPhoto} alt="Riferimento" className="w-full h-full object-cover" />
+              </div>
+            )}
 
-            {isCalibrating ? (
+            {(capturedPhoto && isCalibrating) && (
               <VirtualCaliper
                 settings={settings}
                 onConfirm={(pxPerMm) => {
@@ -100,7 +114,9 @@ function App() {
                   setIsCalibrating(false);
                 }}
               />
-            ) : (
+            )}
+
+            {(capturedPhoto && !isCalibrating) && (
               <>
                 <OverlayCanvas
                   settings={settings}
@@ -108,31 +124,40 @@ function App() {
                   gridOffset={gridOffset}
                 />
 
-                {/* Istruzioni in Overlay - Fase 2 Target */}
+                {/* Istruzioni in Overlay - Fase 3 Target Statica */}
                 <div className="absolute top-20 left-4 right-4 z-20 pointer-events-none">
                   <div className="bg-black/60 backdrop-blur-sm border border-zinc-700/50 rounded-xl p-4 shadow-xl">
                     <p className="text-yellow-500 font-bold text-sm mb-1 uppercase tracking-wider">Step 1: Allinea la Corda</p>
-                    <p className="text-white text-sm mb-3">Trascina lo schermo a destra o sinistra finché la <span className="font-bold text-yellow-500">Linea Gialla</span> si sovrappone esattamente alla corda dell'arco.</p>
+                    <p className="text-white text-sm mb-3">Trascina lo schermo a destra o sinistra finché la <span className="font-bold text-yellow-500">Linea Gialla</span> si sovrappone alla corda della foto.</p>
 
-                    <p className="text-green-500 font-bold text-sm mb-1 uppercase tracking-wider">Step 2: Regola il Centershot</p>
-                    <p className="text-white text-sm">Usa la brugola per regolare il bottone (plunger) e spostare fisicamente la freccia, finché la punta non rientra perfettamente nel tracciato del <span className="font-bold text-green-500">Target Verde</span>.</p>
+                    <p className="text-green-500 font-bold text-sm mb-1 uppercase tracking-wider">Step 2: Verifica Centershot</p>
+                    <p className="text-white text-sm">Controlla se la freccia nella foto è dentro il <span className="font-bold text-green-500">Target Verde</span>. Altrimenti poggia il telefono, regola il plunger e scatta una nuova foto.</p>
                   </div>
-                </div>
-
-                {/* Tasto Ricalibra */}
-                <div className="absolute bottom-12 w-full flex justify-center z-20 pointer-events-auto">
-                  <button
-                    onClick={() => { setIsCalibrating(true); setGridOffset(0); }}
-                    className="bg-zinc-800/80 backdrop-blur hover:bg-zinc-700 text-white font-bold py-2 px-6 rounded-full border border-zinc-600 shadow-lg text-sm transition-all"
-                  >
-                    Ricalibra Scala 🔍
-                  </button>
                 </div>
               </>
             )}
 
-          </>
-        ) : (
+            {/* Comandi Floating su foto statica */}
+            {capturedPhoto && (
+              <div className="absolute bottom-12 w-full flex justify-center gap-4 z-20 pointer-events-auto px-4">
+                {!isCalibrating && (
+                  <button
+                    onClick={() => { setIsCalibrating(true); setGridOffset(0); }}
+                    className="flex-1 bg-zinc-800/80 backdrop-blur hover:bg-zinc-700 text-white font-bold py-3 px-4 rounded-full border border-zinc-600 shadow-lg text-sm transition-all"
+                  >
+                    Ricalibra Scala
+                  </button>
+                )}
+                <button
+                  onClick={retakePhoto}
+                  className="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-3 px-4 rounded-full shadow-lg text-sm transition-all"
+                >
+                  Nuova Foto 📸
+                </button>
+              </div>
+            )}
+
+          </>) : (
           <div className="flex flex-col items-center justify-center h-full px-6 text-center text-zinc-400">
             <div className="w-16 h-16 bg-zinc-900 rounded-full flex items-center justify-center mb-4 border border-zinc-800">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 text-yellow-500">
