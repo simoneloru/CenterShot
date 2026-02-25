@@ -111,11 +111,11 @@ function App() {
                 {/* Istruzioni in Overlay - Fase 2 Target */}
                 <div className="absolute top-20 left-4 right-4 z-20 pointer-events-none">
                   <div className="bg-black/60 backdrop-blur-sm border border-zinc-700/50 rounded-xl p-4 shadow-xl">
-                    <p className="text-yellow-500 font-bold text-sm mb-1 uppercase tracking-wider">Fase 2: Allineamento Centershot</p>
-                    <p className="text-white text-sm mb-3">Trascina lo schermo col dito a destra o sinistra per sovrapporre la <span className="font-bold text-yellow-500">Corda Gialla</span> alla corda vera dell'arco.</p>
+                    <p className="text-yellow-500 font-bold text-sm mb-1 uppercase tracking-wider">Step 1: Allinea la Corda</p>
+                    <p className="text-white text-sm mb-3">Trascina lo schermo a destra o sinistra finché la <span className="font-bold text-yellow-500">Linea Gialla</span> si sovrappone esattamente alla corda dell'arco.</p>
 
-                    <p className="text-blue-400 font-bold text-sm mb-1 uppercase tracking-wider">L'Angolo Ideale</p>
-                    <p className="text-white text-sm">Gira il plunger finché la sagoma tratteggiata verde della freccia vera cade esattamente dentro il <span className="font-bold text-blue-400">Target</span> disegnato a lato.</p>
+                    <p className="text-green-500 font-bold text-sm mb-1 uppercase tracking-wider">Step 2: Regola il Centershot</p>
+                    <p className="text-white text-sm">Usa la brugola per regolare il bottone (plunger) e spostare fisicamente la freccia, finché la punta non rientra perfettamente nel tracciato del <span className="font-bold text-green-500">Target Verde</span>.</p>
                   </div>
                 </div>
 
