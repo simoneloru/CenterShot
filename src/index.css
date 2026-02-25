@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    @apply h-full w-full overflow-hidden bg-zinc-950 text-white selection:bg-yellow-500/30;
+    touch-action: none; /* Previene scroll e zoom nativi su mobile per app-like experience */
+  }
+  
+  #root {
+    @apply h-full w-full flex flex-col;
+  }
+}
