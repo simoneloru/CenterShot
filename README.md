@@ -1,7 +1,5 @@
 # CenterShot - Recurve Bow Tuning Tool
 
-[![Deploy to GitHub Pages](https://github.com/simoneloru/CenterShot/actions/workflows/deploy.yml/badge.svg)](https://github.com/simoneloru/CenterShot/actions/workflows/deploy.yml)
-
 *[🌍 Scroll down for the English version](#english-version)*
 
 ---
