@@ -1,16 +1,83 @@
-# React + Vite
+# 🎯 CenterShot - Recurve Bow Tuning Tool
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+[![Deploy to GitHub Pages](https://github.com/simoneloru/CenterShot/actions/workflows/deploy.yml/badge.svg)](https://github.com/simoneloru/CenterShot/actions/workflows/deploy.yml)
 
-Currently, two official plugins are available:
+*[🌍 Scroll down for the English version](#english-version)*
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## React Compiler
+### 🇮🇹 VERSIONE ITALIANA
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+**CenterShot** è una web app gratuita e open-source pensata per gli arcieri (arco olimpico / recurve bow). Aiuta a calibrare il centershot (allineamento della freccia rispetto alla corda e ai flettenti) in maniera millimetrica, abbandonando le misurazioni "ad occhio".
 
-## Expanding the ESLint configuration
+L'app utilizza la fotocamera posteriore dello smartphone per tracciare digitalmente le linee di ingombro della freccia in base al calibro reale, sovrapponendole al feed video in tempo reale.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## ✨ Funzionalità (Features)
+- 📸 **Live Camera Overlay:** Utilizza la fotocamera del tuo dispositivo per tracciare una linea di asse centrale e un profilo della freccia.
+- 📐 **Calcolo Esatto dell'Offset:** Inserisci il diametro esatto della tua freccia (es. 5.5mm o 0.216") e se sei destrorso (RH) o mancino (LH). L'app disegnerà esattamente dove dovrebbe trovarsi il bordo esterno della freccia per un setup ottimale.
+- 📱 **Mobile First:** Creata come Web App, funziona direttamente dal browser del telefono (nessuna installazione richiesta) tramite *GitHub Pages*.
+- 🌓 **Interfaccia High-Contrast:** UI scura e minimale studiata per essere visibile anche all'aperto sotto la luce del sole.
+
+## 🏹 Come si usa sul campo
+1. Posiziona il tuo arco in verticale, fermo su un cavalletto o supporto.
+2. Apri `CenterShot` sul tuo smartphone.
+3. Clicca sull'icona delle impostazioni ⚙️ e inserisci sesso/mano e il diametro freccia.
+4. Mettiti dietro l'arco e allinea la linea gialla dell'app con la corda in modo che tagli perfettamente a metà i due flettenti.
+5. Regola il bottone (plunger) del tuo arco finché la freccia non rientra esattamente nella sagoma o bordo asse calcolati dalla linea colorata.
+
+## 💻 Sviluppo 
+
+Il progetto è costruito con **Vite**, **React** e **Tailwind CSS**.
+
+### Installazione in locale
+```bash
+# Clona il repository
+git clone https://github.com/simoneloru/CenterShot.git
+cd CenterShot
+
+# Installa le dipendenze
+npm install
+
+# Avvia il server di sviluppo (esponilo in host per testare su mobile)
+npm run dev -- --host
+```
+
+---
+
+<a name="english-version"></a>
+
+### 🇬🇧 ENGLISH VERSION
+
+**CenterShot** is a free, open-source web application designed for recurve bow archers. It assists in calibrating the centershot (the alignment of the arrow relative to the bowstring and limbs) with millimeter precision, eliminating "eyeball" estimation.
+
+The app leverages your smartphone's rear camera to digitally overlay the exact arrow profile thickness, based on the actual arrow diameter, onto a real-time video feed.
+
+## ✨ Features
+- 📸 **Live Camera Overlay:** Uses your device's camera to draw a central axis line and an arrow profile.
+- 📐 **Exact Offset Calculation:** Input the exact diameter of your arrow (e.g., 5.5mm or 0.216") and your handedness (Right/Left). The app will calculate and draw exactly where the outer edge of the arrow should rest for an optimal setup.
+- 📱 **Mobile First:** Built as a Web App, it runs directly from your phone's browser (no installation needed) hosted on *GitHub Pages*.
+- 🌓 **High-Contrast Interface:** Dark and minimal UI designed to be readable outdoors under sunlight.
+
+## 🏹 How to use it on the field
+1. Place your bow vertically and securely on a bow stand.
+2. Open `CenterShot` on your smartphone.
+3. Tap the Settings icon ⚙️ and enter your handedness and arrow diameter.
+4. Stand precisely behind the bow and align the app's yellow line with the bowstring, ensuring it perfectly bisects both limbs.
+5. Adjust your bow's plunger button until the arrow rests perfectly within the calculated gauge lines.
+
+## 💻 Development
+
+The project is built with **Vite**, **React**, and **Tailwind CSS**.
+
+### Local Setup
+```bash
+# Clone the repo
+git clone https://github.com/simoneloru/CenterShot.git
+cd CenterShot
+
+# Install dependencies
+npm install
+
+# Start the dev server (expose host to test on mobile)
+npm run dev -- --host
+```
