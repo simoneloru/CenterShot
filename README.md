@@ -1,4 +1,4 @@
-# 🎯 CenterShot - Recurve Bow Tuning Tool
+# CenterShot - Recurve Bow Tuning Tool
 
 [![Deploy to GitHub Pages](https://github.com/simoneloru/CenterShot/actions/workflows/deploy.yml/badge.svg)](https://github.com/simoneloru/CenterShot/actions/workflows/deploy.yml)
 
@@ -12,20 +12,20 @@
 
 L'app utilizza la fotocamera posteriore dello smartphone per tracciare digitalmente le linee di ingombro della freccia in base al calibro reale, sovrapponendole al feed video in tempo reale.
 
-## ✨ Funzionalità (Features)
-- 📸 **Live Camera Overlay:** Utilizza la fotocamera del tuo dispositivo per tracciare una linea di asse centrale e un profilo della freccia.
+## Funzionalità (Features)
+- **Live Camera Overlay:** Utilizza la fotocamera del tuo dispositivo per tracciare una linea di asse centrale e un profilo della freccia.
 - 📐 **Calcolo Esatto dell'Offset:** Inserisci il diametro esatto della tua freccia (es. 5.5mm o 0.216") e se sei destrorso (RH) o mancino (LH). L'app disegnerà esattamente dove dovrebbe trovarsi il bordo esterno della freccia per un setup ottimale.
 - 📱 **Mobile First:** Creata come Web App, funziona direttamente dal browser del telefono (nessuna installazione richiesta) tramite *GitHub Pages*.
-- 🌓 **Interfaccia High-Contrast:** UI scura e minimale studiata per essere visibile anche all'aperto sotto la luce del sole.
+- **High-Contrast Interface:** UI scura e minimale studiata per essere visibile anche all'aperto sotto la luce del sole.
 
-## 🏹 Come si usa sul campo
+## Come si usa sul campo
 1. Posiziona il tuo arco in verticale, fermo su un cavalletto o supporto.
 2. Apri `CenterShot` sul tuo smartphone.
 3. Clicca sull'icona delle impostazioni ⚙️ e inserisci sesso/mano e il diametro freccia.
 4. Mettiti dietro l'arco e allinea la linea gialla dell'app con la corda in modo che tagli perfettamente a metà i due flettenti.
 5. Regola il bottone (plunger) del tuo arco finché la freccia non rientra esattamente nella sagoma o bordo asse calcolati dalla linea colorata.
 
-## 💻 Sviluppo 
+## Sviluppo 
 
 Il progetto è costruito con **Vite**, **React** e **Tailwind CSS**.
 
@@ -52,20 +52,20 @@ npm run dev -- --host
 
 The app leverages your smartphone's rear camera to digitally overlay the exact arrow profile thickness, based on the actual arrow diameter, onto a real-time video feed.
 
-## ✨ Features
-- 📸 **Live Camera Overlay:** Uses your device's camera to draw a central axis line and an arrow profile.
+## Features
+- **Live Camera Overlay:** Uses your device's camera to draw a central axis line and an arrow profile.
 - 📐 **Exact Offset Calculation:** Input the exact diameter of your arrow (e.g., 5.5mm or 0.216") and your handedness (Right/Left). The app will calculate and draw exactly where the outer edge of the arrow should rest for an optimal setup.
 - 📱 **Mobile First:** Built as a Web App, it runs directly from your phone's browser (no installation needed) hosted on *GitHub Pages*.
-- 🌓 **High-Contrast Interface:** Dark and minimal UI designed to be readable outdoors under sunlight.
+- **High-Contrast Interface:** Dark and minimal UI designed to be readable outdoors under sunlight.
 
-## 🏹 How to use it on the field
+## How to use it on the field
 1. Place your bow vertically and securely on a bow stand.
 2. Open `CenterShot` on your smartphone.
 3. Tap the Settings icon ⚙️ and enter your handedness and arrow diameter.
 4. Stand precisely behind the bow and align the app's yellow line with the bowstring, ensuring it perfectly bisects both limbs.
 5. Adjust your bow's plunger button until the arrow rests perfectly within the calculated gauge lines.
 
-## 💻 Development
+## Development
 
 The project is built with **Vite**, **React**, and **Tailwind CSS**.
 
