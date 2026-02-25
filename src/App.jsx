@@ -32,8 +32,8 @@ function App() {
 
           <button
             className={`backdrop-blur px-4 py-2 rounded-full text-sm font-medium border transition ${cameraActive
-                ? 'bg-red-500/20 text-red-400 border-red-500/50 hover:bg-red-500/30'
-                : 'bg-zinc-800/80 text-white border-zinc-700 hover:bg-zinc-700'
+              ? 'bg-red-500/20 text-red-400 border-red-500/50 hover:bg-red-500/30'
+              : 'bg-zinc-800/80 text-white border-zinc-700 hover:bg-zinc-700'
               }`}
             onClick={() => setCameraActive(!cameraActive)}
           >
@@ -55,6 +55,17 @@ function App() {
           <>
             <CameraFeed />
             <OverlayCanvas settings={settings} />
+
+            {/* Istruzioni in Overlay */}
+            <div className="absolute top-20 left-4 right-4 z-20 pointer-events-none">
+              <div className="bg-black/60 backdrop-blur-sm border border-zinc-700/50 rounded-xl p-4 shadow-xl">
+                <p className="text-yellow-500 font-bold text-sm mb-1">Passo 1</p>
+                <p className="text-white text-sm">Posiziona l'arco su un supporto e allinea la <span className="font-bold text-yellow-500">Linea Gialla</span> in modo che tagli perfettamente a metà la corda e i flettenti.</p>
+
+                <p className="text-blue-400 font-bold text-sm mt-3 mb-1">Passo 2</p>
+                <p className="text-white text-sm">Regola il bottone/plunger finché la freccia non rientra perfettamente all'interno del <span className="font-bold text-blue-400">Margine Colorato</span>.</p>
+              </div>
+            </div>
           </>
         ) : (
           <div className="flex flex-col items-center justify-center h-full px-6 text-center text-zinc-400">
