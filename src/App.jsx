@@ -3,6 +3,7 @@ import { Settings } from 'lucide-react';
 import CameraFeed from './components/CameraFeed';
 import OverlayCanvas from './components/OverlayCanvas';
 import SettingsPanel from './components/SettingsPanel';
+import VirtualCaliper from './components/VirtualCaliper';
 
 function App() {
   const [cameraActive, setCameraActive] = useState(false);
@@ -12,8 +13,35 @@ function App() {
   const [settings, setSettings] = useState({
     isRH: true, // true = Destro, false = Mancino
     diameter: 5.5, // mm di default per freccia outdoor (es. X10 o ACE)
-    unit: 'mm'
+    unit: 'mm',
+    offsetRatio: 0.5 // 0.5 = Mezza freccia sporgente
   });
+
+  // Stati per la Calibrazione e Rendering
+  const [isCalibrating, setIsCalibrating] = useState(true);
+  const [pixelsPerMm, setPixelsPerMm] = useState(null);
+  const [gridOffset, setGridOffset] = useState(0);
+
+  // Variabili per il Dragging del Reticolo
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+
+  const handleDragStart = (e) => {
+    if (isCalibrating) return; // Disabilitato in fase calibrazione
+    setIsDragging(true);
+    const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+    setStartX(clientX - gridOffset);
+  };
+
+  const handleDragMove = (e) => {
+    if (!isDragging || isCalibrating) return;
+    const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+    setGridOffset(clientX - startX);
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
 
   return (
     <div className="relative h-full w-full bg-black flex flex-col font-sans">
@@ -50,22 +78,59 @@ function App() {
       />
 
       {/* Main Content Area */}
-      <main className="flex-1 relative w-full h-full overflow-hidden">
+      <main
+        className="flex-1 relative w-full h-full overflow-hidden touch-none"
+        onMouseDown={handleDragStart}
+        onMouseMove={handleDragMove}
+        onMouseUp={handleDragEnd}
+        onMouseLeave={handleDragEnd}
+        onTouchStart={handleDragStart}
+        onTouchMove={handleDragMove}
+        onTouchEnd={handleDragEnd}
+      >
         {cameraActive ? (
           <>
             <CameraFeed />
-            <OverlayCanvas settings={settings} />
 
-            {/* Istruzioni in Overlay */}
-            <div className="absolute top-20 left-4 right-4 z-20 pointer-events-none">
-              <div className="bg-black/60 backdrop-blur-sm border border-zinc-700/50 rounded-xl p-4 shadow-xl">
-                <p className="text-yellow-500 font-bold text-sm mb-1">Passo 1</p>
-                <p className="text-white text-sm">Posiziona l'arco su un supporto e allinea la <span className="font-bold text-yellow-500">Linea Gialla</span> in modo che tagli perfettamente a metà la corda e i flettenti.</p>
+            {isCalibrating ? (
+              <VirtualCaliper
+                settings={settings}
+                onConfirm={(pxPerMm) => {
+                  setPixelsPerMm(pxPerMm);
+                  setIsCalibrating(false);
+                }}
+              />
+            ) : (
+              <>
+                <OverlayCanvas
+                  settings={settings}
+                  pixelsPerMm={pixelsPerMm}
+                  gridOffset={gridOffset}
+                />
 
-                <p className="text-blue-400 font-bold text-sm mt-3 mb-1">Passo 2</p>
-                <p className="text-white text-sm">Regola il bottone/plunger finché la freccia non rientra perfettamente all'interno del <span className="font-bold text-blue-400">Margine Colorato</span>.</p>
-              </div>
-            </div>
+                {/* Istruzioni in Overlay - Fase 2 Target */}
+                <div className="absolute top-20 left-4 right-4 z-20 pointer-events-none">
+                  <div className="bg-black/60 backdrop-blur-sm border border-zinc-700/50 rounded-xl p-4 shadow-xl">
+                    <p className="text-yellow-500 font-bold text-sm mb-1 uppercase tracking-wider">Fase 2: Allineamento Centershot</p>
+                    <p className="text-white text-sm mb-3">Trascina lo schermo col dito a destra o sinistra per sovrapporre la <span className="font-bold text-yellow-500">Corda Gialla</span> alla corda vera dell'arco.</p>
+
+                    <p className="text-blue-400 font-bold text-sm mb-1 uppercase tracking-wider">L'Angolo Ideale</p>
+                    <p className="text-white text-sm">Gira il plunger finché la sagoma tratteggiata verde della freccia vera cade esattamente dentro il <span className="font-bold text-blue-400">Target</span> disegnato a lato.</p>
+                  </div>
+                </div>
+
+                {/* Tasto Ricalibra */}
+                <div className="absolute bottom-12 w-full flex justify-center z-20 pointer-events-auto">
+                  <button
+                    onClick={() => { setIsCalibrating(true); setGridOffset(0); }}
+                    className="bg-zinc-800/80 backdrop-blur hover:bg-zinc-700 text-white font-bold py-2 px-6 rounded-full border border-zinc-600 shadow-lg text-sm transition-all"
+                  >
+                    Ricalibra Scala 🔍
+                  </button>
+                </div>
+              </>
+            )}
+
           </>
         ) : (
           <div className="flex flex-col items-center justify-center h-full px-6 text-center text-zinc-400">

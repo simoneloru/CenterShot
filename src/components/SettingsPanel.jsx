@@ -73,9 +73,23 @@ function SettingsPanel({ isOpen, onClose, settings, onSettingsChange }) {
                                 {settings.unit}
                             </span>
                         </div>
-                        <p className="text-xs text-zinc-500 mt-2">
+                        <p className="text-xs text-zinc-500 mt-2 mb-4">
                             L'app calcolerà in automatico lo scostamento perfetto affinché la punta sporga correttamente rispetto alla corda.
                         </p>
+                    </div>
+
+                    {/* Proporzione Offset */}
+                    <div>
+                        <label className="block text-sm font-medium text-zinc-400 mb-2">Sporgenza Punta (Offset)</label>
+                        <select
+                            className="w-full bg-zinc-800 border border-zinc-700 rounded-lg py-3 px-4 text-white focus:ring-2 focus:ring-yellow-500 appearance-none outline-none"
+                            value={settings.offsetRatio}
+                            onChange={(e) => onSettingsChange({ ...settings, offsetRatio: parseFloat(e.target.value) })}
+                        >
+                            <option value={0.5}>Mezza Freccia (Standard)</option>
+                            <option value={0.33}>Un Terzo di Freccia</option>
+                            <option value={0}>Filo-Corda (Zero sporgenza)</option>
+                        </select>
                     </div>
 
                     <button
