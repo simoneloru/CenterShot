@@ -1,5 +1,7 @@
 # CenterShot - Recurve Bow Tuning Tool
 
+🏹 **[Open Live App on your Phone](https://simoneloru.github.io/CenterShot/)**
+
 *[🌍 Scroll down for the English version](#english-version)*
 
 ---
