@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 
-function OverlayCanvas({ settings, pixelsPerMm, gridOffset }) {
+function OverlayCanvas({ settings, pixelsPerMm, gridOffset, arrowOffset }) {
     const canvasRef = useRef(null);
 
     useEffect(() => {
@@ -29,62 +29,65 @@ function OverlayCanvas({ settings, pixelsPerMm, gridOffset }) {
 
             const centerX = w / 2 + gridOffset; // L'intera griglia può essere 'trascinata'
 
-            // 1. Linea Asse Centrale (Corda)
+            // 1. Linea Asse Centrale (Corda) - Gialla
             ctx.beginPath();
             ctx.moveTo(centerX, 0);
             ctx.lineTo(centerX, h);
-            ctx.strokeStyle = '#eab308'; // Giallo 500 (Tailwind)
+            ctx.strokeStyle = '#eab308'; // Giallo 500
             ctx.lineWidth = 2;
             ctx.stroke();
 
-            // Conversione diametro freccia da pollici a mm (se necessario)
+            // Conversione diametro freccia in mm
             let diameterMm = settings.diameter;
             if (settings.unit === 'in') {
                 diameterMm = settings.diameter * 25.4;
             }
 
-            const offsetDirection = settings.isRH ? -1 : 1; // -1 = Sinistra, 1 = Destra
+            const offsetDirection = settings.isRH ? -1 : 1;
 
-            // Calcolo posizioni matematiche in base alla calibrazione e all'offsetRatio
-            // offsetRatio 0.5 = asse freccia sulla corda (mezza fuori)
-            // offsetRatio 0.0 = filo corda (bordo esterno freccia allineato alla corda)
-            const arrowRadiusPx = (diameterMm / 2) * pixelsPerMm;
-
+            // Calcolo posizione ideale del CENTRO della freccia (Linea Verde)
             const outerEdgeDistMm = diameterMm * settings.offsetRatio;
             const arrowCenterDistMm = outerEdgeDistMm - (diameterMm / 2);
-
             const arrowCenterDistPx = arrowCenterDistMm * pixelsPerMm;
-            const arrowCenterX = centerX + (arrowCenterDistPx * offsetDirection);
 
-            // Disegno l'ingombro trasparente della freccia
-            ctx.fillStyle = 'rgba(34, 197, 94, 0.3)'; // Verde (Tailwind green-500)
-            ctx.fillRect(arrowCenterX - arrowRadiusPx, 0, arrowRadiusPx * 2, h);
+            const idealCenterX = centerX + (arrowCenterDistPx * offsetDirection);
 
-            // Bordo Esterno Freccia
+            // 2. Linea Ideale Centershot - Verde
             ctx.beginPath();
-            const outerEdgeX = arrowCenterX + (arrowRadiusPx * offsetDirection);
-            ctx.moveTo(outerEdgeX, 0);
-            ctx.lineTo(outerEdgeX, h);
+            ctx.moveTo(idealCenterX, 0);
+            ctx.lineTo(idealCenterX, h);
             ctx.strokeStyle = '#22c55e'; // Verde
-            ctx.lineWidth = 1.5;
-            ctx.setLineDash([5, 5]);
+            ctx.lineWidth = 2;
+            ctx.setLineDash([8, 8]); // Tratteggiata per indicare il "dovrebbe essere qui"
             ctx.stroke();
             ctx.setLineDash([]);
 
-            // Label
-            ctx.fillStyle = '#22c55e';
-            ctx.font = '12px sans-serif';
-            ctx.fillText(`Target Freccia`, outerEdgeX + (settings.isRH ? -85 : 10), h / 2 - 20);
+            // 3. Linea Reale Freccia (Draggabile dall'utente) - Rossa
+            const actualArrowX = w / 2 + arrowOffset;
+            ctx.beginPath();
+            ctx.moveTo(actualArrowX, 0);
+            ctx.lineTo(actualArrowX, h);
+            ctx.strokeStyle = '#ef4444'; // Rosso
+            ctx.lineWidth = 2;
+            ctx.stroke();
 
+            // Labels
             ctx.fillStyle = '#eab308';
-            ctx.fillText('Corda', centerX + 10, h / 2);
+            ctx.font = 'bold 12px sans-serif';
+            ctx.fillText('Corda', centerX + 8, h / 2 - 40);
+
+            ctx.fillStyle = '#22c55e';
+            ctx.fillText('Ideale', idealCenterX + (settings.isRH ? -45 : 8), h / 2 - 20);
+
+            ctx.fillStyle = '#ef4444';
+            ctx.fillText('Freccia', actualArrowX + 8, h / 2);
         };
 
         window.addEventListener('resize', resizeCanvas);
-        resizeCanvas(); // Draw initial
+        resizeCanvas();
 
         return () => window.removeEventListener('resize', resizeCanvas);
-    }, [settings, pixelsPerMm, gridOffset]); // Ridisegna se cambiano impostazioni, scala o drag offset
+    }, [settings, pixelsPerMm, gridOffset, arrowOffset]);
 
     return (
         <canvas

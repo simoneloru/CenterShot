@@ -21,34 +21,97 @@ function App() {
   // Stati per la Calibrazione e Rendering
   const [isCalibrating, setIsCalibrating] = useState(true);
   const [pixelsPerMm, setPixelsPerMm] = useState(null);
-  const [gridOffset, setGridOffset] = useState(0);
+  const [gridOffset, setGridOffset] = useState(0);       // Offset Linea Gialla dalla fotocamera
+  const [arrowOffset, setArrowOffset] = useState(-50);   // Offset Linea Rossa dal centro schermo (inizializzata a lato per visibilità)
 
-  // Variabili per il Dragging del Reticolo
+  // Variabili per il Dragging del Reticolo e della Freccia
   const [isDragging, setIsDragging] = useState(false);
+  const [dragTarget, setDragTarget] = useState(null); // 'grid' o 'arrow'
   const [startX, setStartX] = useState(0);
 
   const handleDragStart = (e) => {
-    if (isCalibrating || !capturedPhoto) return; // Disabilitato in fase calibrazione o senza foto
+    if (isCalibrating || !capturedPhoto) return;
+
     setIsDragging(true);
     const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-    setStartX(clientX - gridOffset);
+    const screenCenter = window.innerWidth / 2;
+
+    const distToGrid = Math.abs(clientX - (screenCenter + gridOffset));
+    const distToArrow = Math.abs(clientX - (screenCenter + arrowOffset));
+
+    // Selettore intelligente dell'elemento da trascinare in base a dove l'utente poggia il dito
+    if (distToArrow < 50 && distToArrow < distToGrid) {
+      setDragTarget('arrow');
+      setStartX(clientX - arrowOffset);
+    } else {
+      setDragTarget('grid');
+      setStartX(clientX - gridOffset);
+    }
   };
 
   const handleDragMove = (e) => {
     if (!isDragging || isCalibrating || !capturedPhoto) return;
     const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
-    setGridOffset(clientX - startX);
+
+    if (dragTarget === 'arrow') {
+      setArrowOffset(clientX - startX);
+    } else {
+      setGridOffset(clientX - startX);
+    }
   };
 
   const handleDragEnd = () => {
     setIsDragging(false);
+    setDragTarget(null);
   };
 
   const retakePhoto = () => {
     setCapturedPhoto(null);
     setIsCalibrating(true);
     setGridOffset(0);
+    setArrowOffset(-50);
   };
+
+  // -------------------------------------------------------------------------------- //
+  //  CALCOLATORE GIRI BOTTONE (Basato su Filetto Standard Ottico 5/16"-24)
+  // -------------------------------------------------------------------------------- //
+  let tuningDiagnostics = null;
+  if (capturedPhoto && !isCalibrating && pixelsPerMm) {
+    // 1. Convertiamo in millimetri reali il tuning che ci aspettavamo (Linea Verde Ideale)
+    let diameterMm = settings.diameter;
+    if (settings.unit === 'in') diameterMm *= 25.4;
+
+    const offsetDirection = settings.isRH ? -1 : 1;
+    const outerEdgeDistMm = diameterMm * settings.offsetRatio;
+    const arrowCenterDistMm = outerEdgeDistMm - (diameterMm / 2);
+    const idealOffsetMm = arrowCenterDistMm * offsetDirection; // Posizione ideale rispetto alla corda in mm
+
+    // 2. Misuriamo la Linea Rossa rispetto alla Linea Gialla in pixel e convertiamola
+    const actualOffsetMm = (arrowOffset - gridOffset) / pixelsPerMm;
+
+    // 3. Calcoliamo l'Errore
+    const diffMm = actualOffsetMm - idealOffsetMm;
+    const turns = Math.abs(diffMm / 1.058).toFixed(1); // 1.058mm a Giro
+
+    if (Math.abs(diffMm) < 0.2) {
+      tuningDiagnostics = <span className="text-green-500 font-bold border border-green-500/50 bg-green-500/10 px-3 py-1 rounded-md">Centershot Perfetto! 🎯</span>;
+    } else {
+      let action = "";
+      if (settings.isRH) {
+        action = diffMm > 0 ? "Avvita" : "Svita";
+      } else {
+        action = diffMm > 0 ? "Svita" : "Avvita";
+      }
+      tuningDiagnostics = (
+        <span>
+          <span className="text-red-400 font-bold uppercase tracking-widest block text-xs mb-1">TUNING CONIGLIATO:</span>
+          <span className="text-white font-bold">{action} il bottone di {turns} giri</span>
+          <span className="text-zinc-400 text-xs ml-2">({Math.abs(diffMm).toFixed(2)} mm)</span>
+        </span>
+      );
+    }
+  }
+  // -------------------------------------------------------------------------------- //
 
   return (
     <div className="relative h-full w-full bg-black flex flex-col font-sans">
@@ -122,16 +185,21 @@ function App() {
                   settings={settings}
                   pixelsPerMm={pixelsPerMm}
                   gridOffset={gridOffset}
+                  arrowOffset={arrowOffset}
                 />
 
                 {/* Istruzioni in Overlay - Fase 3 Target Statica */}
                 <div className="absolute top-20 left-4 right-4 z-20 pointer-events-none">
                   <div className="bg-black/60 backdrop-blur-sm border border-zinc-700/50 rounded-xl p-4 shadow-xl">
-                    <p className="text-yellow-500 font-bold text-sm mb-1 uppercase tracking-wider">Step 1: Allinea la Corda</p>
-                    <p className="text-white text-sm mb-3">Trascina lo schermo a destra o sinistra finché la <span className="font-bold text-yellow-500">Linea Gialla</span> si sovrappone alla corda della foto.</p>
+                    <p className="text-yellow-500 font-bold text-sm mb-1 uppercase tracking-wider">Step 1: Corda</p>
+                    <p className="text-zinc-300 text-sm mb-3">Allinea la <span className="font-bold text-yellow-500">Linea Gialla</span> a quella dell'arco.</p>
 
-                    <p className="text-green-500 font-bold text-sm mb-1 uppercase tracking-wider">Step 2: Verifica Centershot</p>
-                    <p className="text-white text-sm">Controlla se la freccia nella foto è dentro il <span className="font-bold text-green-500">Target Verde</span>. Altrimenti poggia il telefono, regola il plunger e scatta una nuova foto.</p>
+                    <p className="text-red-400 font-bold text-sm mb-1 uppercase tracking-wider">Step 2: Freccia</p>
+                    <p className="text-zinc-300 text-sm mb-3">Sposta la <span className="font-bold text-red-500">Linea Rossa</span> al centro della tua freccia.</p>
+
+                    <div className="mt-3 pt-3 border-t border-zinc-700/50 text-center">
+                      {tuningDiagnostics}
+                    </div>
                   </div>
                 </div>
               </>
